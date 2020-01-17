@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/css/main.1111d916.chunk.css",
+    "main.js": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/main.1003ef58.chunk.js",
+    "main.js.map": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/main.1003ef58.chunk.js.map",
+    "runtime-main.js": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/runtime-main.ec1bdf58.js",
+    "runtime-main.js.map": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/runtime-main.ec1bdf58.js.map",
+    "static/js/2.839bab63.chunk.js": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/2.839bab63.chunk.js",
+    "static/js/2.839bab63.chunk.js.map": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/2.839bab63.chunk.js.map",
+    "index.html": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/index.html",
+    "precache-manifest.67ff4b749c91b5bef7ac16aed381f55a.js": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/precache-manifest.67ff4b749c91b5bef7ac16aed381f55a.js",
+    "service-worker.js": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/service-worker.js",
+    "static/css/main.1111d916.chunk.css.map": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/css/main.1111d916.chunk.css.map",
+    "static/js/2.839bab63.chunk.js.LICENSE": "%7Bderyadok%7D.github.io/%7Bstar-match%7D/static/js/2.839bab63.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ec1bdf58.js",
+    "static/js/2.839bab63.chunk.js",
+    "static/css/main.1111d916.chunk.css",
+    "static/js/main.1003ef58.chunk.js"
+  ]
+}
