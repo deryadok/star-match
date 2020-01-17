@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 
 function App() {
@@ -20,20 +20,70 @@ const StarsDisplay = (props) => {
 const PlayNumber = (props) => {
   return(
     <button 
-      key={props.number} className="number" 
-      onClick={() => props.onClick(props.number,props.status)} 
+      className="number" 
+      onClick={() => props.onClick(props.number, props.status)} 
       style={{backgroundColor: colors[props.status]}}>
       {props.number}
       </button>
   );
 }
 
-const StarMatch = () =>{
+const PlayAgain = (props) => {
+  return(
+    <div className="game-done">
+    <div className="message" style = {{color: props.gameStatus === 'lost' ? 'red' : 'green'}}>{props.gameStatus === 'lost' ? 'Game Over' : 'You Won'}</div>
+      <button onClick={props.onClick}>Tekrar Oyna!</button>
+    </div>
+  );
+}
+
+const useGameState = () => {
+  
   const [stars, setStars] = React.useState(utils.random(1,9));
   const [avaliableNums, setAvaliableNums] = React.useState(utils.range(1,9));
   const [candidateNums, setCandidateNums] = React.useState([]);
+  const [secondsLeft, setSecondsLeft] = React.useState(10);
+
+  useEffect(() =>{
+    if(secondsLeft > 0 && avaliableNums.length > 0){
+      const timerId = setTimeout(() => {
+        setSecondsLeft(secondsLeft - 1);
+      }, 1000);
+      return () => clearTimeout(timerId);
+    }
+  });
+
+  const setGameState = (newCandidateNums) => {
+
+    if (utils.sum(newCandidateNums) !== stars) {
+      setCandidateNums(newCandidateNums);
+    } else {
+      const newAvaliableNums = avaliableNums.filter(
+        n => !newCandidateNums.includes(n)
+      );
+
+      setStars(utils.randomSumIn(newAvaliableNums, 9));
+      setAvaliableNums(newAvaliableNums);
+      setCandidateNums([]);
+    }
+  }
+
+  return {stars, avaliableNums, candidateNums, secondsLeft, setGameState}
+}
+
+
+const Game = (props) =>{
+  
+  const {
+    stars,
+    avaliableNums,
+    candidateNums,
+    secondsLeft,
+    setGameState,
+  } = useGameState()
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
+  const gameStatus = avaliableNums.length === 0 ? 'won' : secondsLeft === 0 ? 'lost' : 'active'
   
   const numberStatus = (number) => {
     if(!avaliableNums.includes(number)){
@@ -42,29 +92,18 @@ const StarMatch = () =>{
     if(candidateNums.includes(number)){
       return candidatesAreWrong ? 'wrong' : 'candidate';
     }
-    return 'avaliable';
+    return 'available';
   };
 
   const onNumberClick = (number, currentStatus) => {
     
-    if(currentStatus === 'used'){
+    if(gameStatus !== 'active' || currentStatus === 'used'){
       return;
     }
     
     const newCandidateNums = currentStatus === 'available' ? candidateNums.concat(number) : candidateNums.filter(cn => cn !== number);
     
-    if(utils.sum(newCandidateNums) !== stars){
-      setCandidateNums(newCandidateNums);
-    }
-    else{
-      const newAvaliableNums = avaliableNums.filter(
-        n => !newCandidateNums.includes(n)
-      );
-      setStars(utils.randomSumIn(newAvaliableNums,9));
-      setAvaliableNums(newAvaliableNums);
-      setCandidateNums([]);
-    }
-
+    setGameState(newCandidateNums);
   };
 
   return(
@@ -74,7 +113,7 @@ const StarMatch = () =>{
       </div>
       <div className="body">
         <div className="left">
-          <StarsDisplay count={stars}></StarsDisplay>
+          {gameStatus !== 'active' ? (<PlayAgain onClick={props.startNewGame} gameStatus={gameStatus}></PlayAgain>) : (<StarsDisplay count={stars}></StarsDisplay>)}
         </div>
         <div className="right">
           {utils.range(1, 9).map(number =>
@@ -83,7 +122,7 @@ const StarMatch = () =>{
         </div>
       </div>
       <div className="timer">
-          Kalan süre: 10
+          Kalan süre: {secondsLeft}
       </div>
     </div>
   );
@@ -95,6 +134,11 @@ const colors = {
   wrong : 'lightcoral',
   candidate : 'deepskyblue'
 };
+
+const StarMatch = () => {
+  const [gameId, setGameId] = React.useState(1);
+  return <Game key={gameId} startNewGame={() => setGameId(gameId + 1)}/>
+}
 
 const utils = {
   sum : arr => arr.reduce((acc,curr) => acc + curr, 0),
