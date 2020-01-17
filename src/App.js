@@ -40,12 +40,12 @@ const PlayAgain = (props) => {
 const useGameState = () => {
   
   const [stars, setStars] = React.useState(utils.random(1,9));
-  const [avaliableNums, setAvaliableNums] = React.useState(utils.range(1,9));
+  const [availableNums, setAvaliableNums] = React.useState(utils.range(1,9));
   const [candidateNums, setCandidateNums] = React.useState([]);
   const [secondsLeft, setSecondsLeft] = React.useState(10);
 
   useEffect(() =>{
-    if(secondsLeft > 0 && avaliableNums.length > 0){
+    if(secondsLeft > 0 && availableNums.length > 0){
       const timerId = setTimeout(() => {
         setSecondsLeft(secondsLeft - 1);
       }, 1000);
@@ -58,17 +58,16 @@ const useGameState = () => {
     if (utils.sum(newCandidateNums) !== stars) {
       setCandidateNums(newCandidateNums);
     } else {
-      const newAvaliableNums = avaliableNums.filter(
+      const newAvailableNums = availableNums.filter(
         n => !newCandidateNums.includes(n)
       );
-
-      setStars(utils.randomSumIn(newAvaliableNums, 9));
-      setAvaliableNums(newAvaliableNums);
+      setStars(utils.randomSumIn(newAvailableNums, 9));
+      setAvaliableNums(newAvailableNums);
       setCandidateNums([]);
     }
   }
 
-  return {stars, avaliableNums, candidateNums, secondsLeft, setGameState}
+  return {stars, availableNums, candidateNums, secondsLeft, setGameState}
 }
 
 
@@ -76,17 +75,17 @@ const Game = (props) =>{
   
   const {
     stars,
-    avaliableNums,
+    availableNums,
     candidateNums,
     secondsLeft,
     setGameState,
   } = useGameState()
 
   const candidatesAreWrong = utils.sum(candidateNums) > stars;
-  const gameStatus = avaliableNums.length === 0 ? 'won' : secondsLeft === 0 ? 'lost' : 'active'
+  const gameStatus = availableNums.length === 0 ? 'won' : secondsLeft === 0 ? 'lost' : 'active'
   
   const numberStatus = (number) => {
-    if(!avaliableNums.includes(number)){
+    if(!availableNums.includes(number)){
       return 'used';
     }
     if(candidateNums.includes(number)){
@@ -141,25 +140,34 @@ const StarMatch = () => {
 }
 
 const utils = {
-  sum : arr => arr.reduce((acc,curr) => acc + curr, 0),
-  range : (min, max) => Array.from({length: max - min +1}, (_,i) => min + i),
-  random : (min, max) => min + Math.floor(Math.random() * (max - min + 1)),
+  //Sum an array
+  sum: arr => arr.reduce((acc, curr) => acc + curr, 0),
+
+  //create an array of numbers between min and max (edges included)
+  range: (min, max) => Array.from({
+    length: max - min + 1
+  }, (_, i) => min + i),
+
+  //pick a random number between min and max (edges included)
+  random: (min, max) => {var rnd = Math.floor(Math.random() * (max - min + 1)) + min; return rnd;} ,
+
+  //given an array of numbers and a max
+  //pick a random sum (<max) from the set of all available sums in arr
   randomSumIn: (arr, max) => {
     const sets = [[]];
     const sums = [];
-    for(let i = 0; i<arr.length; i++){
-      var len = sets.length; 
-      for(let j = 0; j < len; j++){
-        const candidateSet = sets[j].concat(arr[i]);
-        const candidateSum = utils.sum(candidateSet);
-        if(candidateSum <= max){
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = 0, len = sets.length; j < len; j++) {
+        let candidateSet = sets[j].concat(arr[i]);
+        let candidateSum = utils.sum(candidateSet);
+        if (candidateSum <= max) {
           sets.push(candidateSet);
           sums.push(candidateSum);
         }
       }
-      return sums[utils.random(0, sums.length -1)];
     }
-  }, 
+    return sums[utils.random(0, sums.length - 1)];
+  },
 };
 
 export default App;
